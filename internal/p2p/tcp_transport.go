@@ -52,6 +52,7 @@ func (t *TCPTransport) ListenAndAccept() error {
 }
 
 func (t *TCPTransport) startAcceptLoop() {
+	fmt.Printf("TCP transport listening on %s\n", t.ListenAddr)
 	for {
 		conn, err := t.listener.Accept()
 		if err != nil {
@@ -69,13 +70,13 @@ func (t *TCPTransport) handleConn(conn net.Conn) {
 		return
 	}
 
-	msg := &Temp{}
+	msg := &Message{}
 	for {
 		if err := t.Decoder.Decode(conn, msg); err != nil {
 			fmt.Printf("TCP decode error:%s \n", err)
 			continue
 		}
+		msg.From = conn.RemoteAddr()
+		fmt.Printf("TCP decode:%s\n", msg)
 	}
 }
-
-type Temp struct{}
